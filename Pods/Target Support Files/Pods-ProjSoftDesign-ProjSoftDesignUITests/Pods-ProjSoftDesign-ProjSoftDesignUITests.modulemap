@@ -1,0 +1,6 @@
+framework module Pods_ProjSoftDesign_ProjSoftDesignUITests {
+  umbrella header "Pods-ProjSoftDesign-ProjSoftDesignUITests-umbrella.h"
+
+  export *
+  module * { export * }
+}
