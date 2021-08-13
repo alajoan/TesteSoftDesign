@@ -13,14 +13,14 @@ class EventTableViewCell: UITableViewCell {
     
     private let title: UILabel = {
        let title = UILabel()
-        title.textColor = .darkGray
+        title.textColor = .white
         title.font = .systemFont(ofSize: 16, weight: .light)
         return title
     }()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        contentView.backgroundColor = .orange
+        contentView.backgroundColor = .systemTeal
         contentView.addSubview(title)
         
     }

@@ -19,6 +19,7 @@ class ViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.viewControllers = [self]
         tableView.backgroundColor = .white
         tableView.dataSource = self
         tableView.delegate = self
@@ -56,7 +57,6 @@ extension ViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print("Selected: ")
         let controller = DetailViewController()
         controller.detailEvents = events[indexPath.row]
         self.show(controller, sender: self)
