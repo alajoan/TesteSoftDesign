@@ -25,8 +25,14 @@ class DataFetcher {
                    do {
                        events.removeAll()
                        let event = try JSONDecoder().decode([EventsRoot].self, from: response.data!)
-                    events.append(contentsOf: event)
-                       completionHandler(events)
+                    
+                    for n in 0...event.count - 1 {
+                        if event[n].people.count > 0 {
+                            events.append(event[n])
+                        }
+                    }
+                    
+                    completionHandler(events)
                     print("Events:  \(events)")
                        
                    } catch DecodingError.keyNotFound(let key, let context) {
@@ -49,6 +55,23 @@ class DataFetcher {
                
            }
        }
+    
+    static func fetchImage(URL: String, completionHandler: @escaping(UIImage) -> Void) {
+            
+            var tempImage: UIImage = UIImage()
+            
+            _ = AF.request(URL, method: .get).response{ (response) in
+                switch response.result {
+                case .success(let responseData):
+                    tempImage = UIImage(data: responseData!, scale: 1) ?? tempImage
+                    completionHandler(tempImage)
+                    break
+                case .failure(let error):
+                    print("Error: \(error)")
+                }
+            }
+            
+        }
 }
 
 

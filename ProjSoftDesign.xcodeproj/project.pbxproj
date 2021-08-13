@@ -21,6 +21,7 @@
 		8476560C26C33A2D003C13A3 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8476560A26C33A2D003C13A3 /* LaunchScreen.storyboard */; };
 		8476561726C33A2D003C13A3 /* ProjSoftDesignTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476561626C33A2D003C13A3 /* ProjSoftDesignTests.swift */; };
 		8476562226C33A2D003C13A3 /* ProjSoftDesignUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8476562126C33A2D003C13A3 /* ProjSoftDesignUITests.swift */; };
+		848DF63226C5F25F000A85C5 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848DF63126C5F25F000A85C5 /* DetailViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -63,6 +64,7 @@
 		8476561D26C33A2D003C13A3 /* ProjSoftDesignUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ProjSoftDesignUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8476562126C33A2D003C13A3 /* ProjSoftDesignUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjSoftDesignUITests.swift; sourceTree = "<group>"; };
 		8476562326C33A2D003C13A3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		848DF63126C5F25F000A85C5 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		AA8A4FC7FD7577A8230D1B24 /* Pods-ProjSoftDesign-ProjSoftDesignUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProjSoftDesign-ProjSoftDesignUITests.release.xcconfig"; path = "Target Support Files/Pods-ProjSoftDesign-ProjSoftDesignUITests/Pods-ProjSoftDesign-ProjSoftDesignUITests.release.xcconfig"; sourceTree = "<group>"; };
 		B4298C87C25AE921B30A281C /* Pods-ProjSoftDesign.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ProjSoftDesign.release.xcconfig"; path = "Target Support Files/Pods-ProjSoftDesign/Pods-ProjSoftDesign.release.xcconfig"; sourceTree = "<group>"; };
 		B5E4890BDF9AEC83A8A63060 /* Pods_ProjSoftDesignTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ProjSoftDesignTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -114,7 +116,8 @@
 			isa = PBXGroup;
 			children = (
 				841A98F726C355CE001B94C2 /* Cells */,
-				8476560326C33A2A003C13A3 /* ViewController.swift */,
+				848DF62F26C5F236000A85C5 /* Main */,
+				848DF63026C5F23F000A85C5 /* Detail */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -213,6 +216,22 @@
 				8476562326C33A2D003C13A3 /* Info.plist */,
 			);
 			path = ProjSoftDesignUITests;
+			sourceTree = "<group>";
+		};
+		848DF62F26C5F236000A85C5 /* Main */ = {
+			isa = PBXGroup;
+			children = (
+				8476560326C33A2A003C13A3 /* ViewController.swift */,
+			);
+			path = Main;
+			sourceTree = "<group>";
+		};
+		848DF63026C5F23F000A85C5 /* Detail */ = {
+			isa = PBXGroup;
+			children = (
+				848DF63126C5F25F000A85C5 /* DetailViewController.swift */,
+			);
+			path = Detail;
 			sourceTree = "<group>";
 		};
 		B541D163636DEE78F77CC033 /* Frameworks */ = {
@@ -469,6 +488,7 @@
 				8476560426C33A2A003C13A3 /* ViewController.swift in Sources */,
 				8476560026C33A2A003C13A3 /* AppDelegate.swift in Sources */,
 				8476560226C33A2A003C13A3 /* SceneDelegate.swift in Sources */,
+				848DF63226C5F25F000A85C5 /* DetailViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
