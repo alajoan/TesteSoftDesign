@@ -25,3 +25,6 @@ struct EventsPeople: Decodable {
     var name = String()
     var picture = String()
 }
+
+
+

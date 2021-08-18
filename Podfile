@@ -7,6 +7,10 @@ target 'ProjSoftDesign' do
 
   # Pods for ProjSoftDesign
 	pod 'Alamofire', '~> 5.4'
+ pod 'RxBlocking', '6.2.0'
+    pod 'RxTest', '6.2.0'
+ pod 'RxSwift', '6.2.0'
+    pod 'RxCocoa', '6.2.0'
   target 'ProjSoftDesignTests' do
     inherit! :search_paths
     # Pods for testing
@@ -15,5 +19,6 @@ target 'ProjSoftDesign' do
   target 'ProjSoftDesignUITests' do
     # Pods for testing
   end
+	
 
 end
