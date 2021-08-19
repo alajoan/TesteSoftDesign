@@ -24,6 +24,7 @@
 		848DF63226C5F25F000A85C5 /* DetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 848DF63126C5F25F000A85C5 /* DetailViewController.swift */; };
 		84CD6B4A26CCAAC200DE0DF6 /* MainViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CD6B4926CCAAC200DE0DF6 /* MainViewModel.swift */; };
 		84CD6B5026CCADBA00DE0DF6 /* DetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CD6B4F26CCADBA00DE0DF6 /* DetailViewModel.swift */; };
+		84CD6B5A26CD761200DE0DF6 /* CheckinViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CD6B5926CD761200DE0DF6 /* CheckinViewModel.swift */; };
 		84DDB6F626C6C7FE00989451 /* MapKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 84DDB6F526C6C7FE00989451 /* MapKit.framework */; };
 		84DDB6FC26C70B6E00989451 /* CheckinViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84DDB6FB26C70B6E00989451 /* CheckinViewController.swift */; };
 		84FD267D26CC9E0200BE25E6 /* NetworkServices.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84FD267C26CC9E0200BE25E6 /* NetworkServices.swift */; };
@@ -72,6 +73,7 @@
 		848DF63126C5F25F000A85C5 /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		84CD6B4926CCAAC200DE0DF6 /* MainViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewModel.swift; sourceTree = "<group>"; };
 		84CD6B4F26CCADBA00DE0DF6 /* DetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewModel.swift; sourceTree = "<group>"; };
+		84CD6B5926CD761200DE0DF6 /* CheckinViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckinViewModel.swift; sourceTree = "<group>"; };
 		84DDB6F526C6C7FE00989451 /* MapKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MapKit.framework; path = System/Library/Frameworks/MapKit.framework; sourceTree = SDKROOT; };
 		84DDB6FB26C70B6E00989451 /* CheckinViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CheckinViewController.swift; sourceTree = "<group>"; };
 		84FD267C26CC9E0200BE25E6 /* NetworkServices.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkServices.swift; sourceTree = "<group>"; };
@@ -126,9 +128,9 @@
 		841A98E426C34858001B94C2 /* View */ = {
 			isa = PBXGroup;
 			children = (
-				84DDB6FA26C70B5300989451 /* Checkin */,
 				848DF62F26C5F236000A85C5 /* Main */,
 				848DF63026C5F23F000A85C5 /* Detail */,
+				84DDB6FA26C70B5300989451 /* Checkin */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -256,6 +258,14 @@
 			path = Detail;
 			sourceTree = "<group>";
 		};
+		84CD6B5826CD74B100DE0DF6 /* Checkin */ = {
+			isa = PBXGroup;
+			children = (
+				84CD6B5926CD761200DE0DF6 /* CheckinViewModel.swift */,
+			);
+			path = Checkin;
+			sourceTree = "<group>";
+		};
 		84DDB6FA26C70B5300989451 /* Checkin */ = {
 			isa = PBXGroup;
 			children = (
@@ -267,8 +277,9 @@
 		84FD267B26CC9DB700BE25E6 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
-				84CD6B4E26CCADA100DE0DF6 /* Detail */,
 				84CD6B4826CCAAB200DE0DF6 /* Main */,
+				84CD6B4E26CCADA100DE0DF6 /* Detail */,
+				84CD6B5826CD74B100DE0DF6 /* Checkin */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -527,6 +538,7 @@
 				841A98E726C34A9E001B94C2 /* Events.swift in Sources */,
 				841A990A26C481BD001B94C2 /* Utils.swift in Sources */,
 				84DDB6FC26C70B6E00989451 /* CheckinViewController.swift in Sources */,
+				84CD6B5A26CD761200DE0DF6 /* CheckinViewModel.swift in Sources */,
 				8476560426C33A2A003C13A3 /* ViewController.swift in Sources */,
 				84CD6B5026CCADBA00DE0DF6 /* DetailViewModel.swift in Sources */,
 				8476560026C33A2A003C13A3 /* AppDelegate.swift in Sources */,

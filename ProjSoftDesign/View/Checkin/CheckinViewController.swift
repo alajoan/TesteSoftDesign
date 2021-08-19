@@ -8,29 +8,59 @@
 import Foundation
 import UIKit
 import Alamofire
+import RxSwift
+
 class CheckinViewController: UIViewController {
     
-    var eventID: String?
+    // MARK: - Variaveis
+    var idEvento: String?
     
-    private lazy var nameLabel: UILabel = {
-        let name = UILabel()
-        name.translatesAutoresizingMaskIntoConstraints = false
-        name.textColor = .black
-        name.text = "Nome"
-        name.textAlignment = .center
-        return name
+    var checkinViewModel: CheckinViewModel?
+    
+    let disposeBag = DisposeBag()
+    
+    var networkService = NetworkServices()
+    
+    // MARK: - criacao de UI
+    private lazy var labelNome: UILabel = {
+        let nome = UILabel()
+        nome.translatesAutoresizingMaskIntoConstraints = false
+        nome.textColor = .black
+        nome.text = "Nome"
+        nome.textAlignment = .left
+        return nome
     }()
     
-    private lazy var emailLabel: UILabel = {
-        let name = UILabel()
-        name.translatesAutoresizingMaskIntoConstraints = false
-        name.textColor = .black
-        name.text = "E-mail"
-        name.textAlignment = .center
-        return name
+    private lazy var labelEmail: UILabel = {
+        let nome = UILabel()
+        nome.translatesAutoresizingMaskIntoConstraints = false
+        nome.textColor = .black
+        nome.text = "E-mail"
+        nome.textAlignment = .left
+        return nome
     }()
     
-    private lazy var textFieldName: UITextField = {
+    private lazy var nomeErrorLabel: UILabel = {
+        let nome = UILabel()
+        nome.translatesAutoresizingMaskIntoConstraints = false
+        nome.textColor = .systemRed
+        nome.text = "Nome precisa ter ao menos 2 letras"
+        nome.font = nome.font.withSize(10)
+        nome.textAlignment = .right
+        return nome
+    }()
+    
+    private lazy var emailErrorLabel: UILabel = {
+        let nome = UILabel()
+        nome.translatesAutoresizingMaskIntoConstraints = false
+        nome.textColor = .systemRed
+        nome.text = "E-mail precisa seguir o padrão exemplo@servidor.com"
+        nome.textAlignment = .right
+        nome.font = nome.font.withSize(10)
+        return nome
+    }()
+    
+    public lazy var textfieldName: UITextField = {
        let textfield = UITextField()
         textfield.placeholder = "Digite seu nome"
         textfield.font = UIFont.systemFont(ofSize: 15)
@@ -44,7 +74,7 @@ class CheckinViewController: UIViewController {
         return textfield
     }()
     
-    private lazy var textFieldEmail: UITextField = {
+    public lazy var textfieldEmail: UITextField = {
        let textfield = UITextField()
         textfield.placeholder = "Digite seu email"
         textfield.font = UIFont.systemFont(ofSize: 15)
@@ -58,50 +88,87 @@ class CheckinViewController: UIViewController {
         return textfield
     }()
     
-    private lazy var checkinButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("Check-in", for: .normal)
-        button.backgroundColor = .systemTeal
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
-        return button
+    private lazy var botaoCheckin: UIButton = {
+        let botao = UIButton()
+        botao.setTitle("Check-in", for: .normal)
+        botao.backgroundColor = .systemTeal
+        botao.translatesAutoresizingMaskIntoConstraints = false
+        botao.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+        return botao
     }()
     
+    // MARK: - ViewDidLoad
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        self.title = "Check-in"
+        guard let titulo = checkinViewModel?.titulo else {return}
+        self.title = titulo
         self.view.backgroundColor = .white
         
-        addViews()
-        addConstraints()
+        adicionarViews()
+        adicionarConstraints()
         
-        textFieldName.delegate = self
-        textFieldEmail.delegate = self
+        textfieldName.delegate = self
+        textfieldEmail.delegate = self
+        
+        textfieldName.becomeFirstResponder()
+        
+        guard let nome = checkinViewModel?.nomePublishSubject else {return}
+        guard let email = checkinViewModel?.emailPublishSubject else {return}
+        
+        textfieldName.rx.text.map { $0 ?? "" }.bind(to: nome).disposed(by: disposeBag)
+        textfieldEmail.rx.text.map { $0 ?? "" }.bind(to: email).disposed(by: disposeBag)
+        
+        checkinViewModel?.ativarBotao().bind(to: botaoCheckin.rx.isUserInteractionEnabled).disposed(by: disposeBag)
+        
+        checkinViewModel?.ativarBotao().map { $0 ? 1 : 0.3 }.bind(to: botaoCheckin.rx.alpha).disposed(by: disposeBag)
+        
+        checkinViewModel?.ativarErroNome().map { $0 ? 1 : 0}.bind(to: nomeErrorLabel.rx.alpha)
+            .disposed(by: disposeBag)
+        
+        checkinViewModel?.ativarErroEmail().map { $0 ? 1 : 0}.bind(to: emailErrorLabel.rx.alpha)
+            .disposed(by: disposeBag)
+        
     }
     
-    func addViews(){
-        view.addSubview(nameLabel)
-        view.addSubview(emailLabel)
-        view.addSubview(textFieldName)
-        view.addSubview(textFieldEmail)
-        view.addSubview(checkinButton)
+    // MARK: - Adicionar views e constraints
+    func adicionarViews(){
+        view.addSubview(labelNome)
+        view.addSubview(labelEmail)
+        view.addSubview(textfieldName)
+        view.addSubview(textfieldEmail)
+        view.addSubview(botaoCheckin)
+        view.addSubview(nomeErrorLabel)
+        view.addSubview(emailErrorLabel)
     }
     
-    func addConstraints(){
+    func adicionarConstraints(){
+        constraintsNameErrorLabel()
         constraintsNameLabel()
         constraintsTextfieldName()
+        constraintsEmailErrorLabel()
         constraintsEmailLabel()
         constraintsTextfieldEmail()
-        constraintsButton()
+        constraintsBotao()
     }
     
+    // MARK: - Constraints
     func constraintsNameLabel() {
         let constraint = [
-            nameLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 60),
-            nameLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            nameLabel.heightAnchor.constraint(equalToConstant: 30),
-            nameLabel.widthAnchor.constraint(equalToConstant: 50)
+            labelNome.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 60),
+            labelNome.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 40),
+            labelNome.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -40)
+        ]
+        
+        constraint.forEach { (item) in
+            item.isActive = true
+        }
+    }
+    
+    func constraintsNameErrorLabel() {
+        let constraint = [
+            nomeErrorLabel.centerYAnchor.constraint(equalTo: labelNome.centerYAnchor),
+            nomeErrorLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -40)
         ]
         
         constraint.forEach { (item) in
@@ -111,10 +178,10 @@ class CheckinViewController: UIViewController {
     
     func constraintsTextfieldName() {
         let constraint = [
-            textFieldName.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 0),
-            textFieldName.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            textFieldName.heightAnchor.constraint(equalToConstant: 40),
-            textFieldName.widthAnchor.constraint(equalToConstant: 350)
+            textfieldName.topAnchor.constraint(equalTo: labelNome.bottomAnchor, constant: 5),
+            textfieldName.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            textfieldName.heightAnchor.constraint(equalToConstant: 40),
+            textfieldName.widthAnchor.constraint(equalToConstant: 350)
         ]
         
         constraint.forEach { (item) in
@@ -124,10 +191,20 @@ class CheckinViewController: UIViewController {
     
     func constraintsEmailLabel() {
         let constraint = [
-            emailLabel.topAnchor.constraint(equalTo: textFieldName.bottomAnchor, constant: 60),
-            emailLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emailLabel.heightAnchor.constraint(equalToConstant: 30),
-            emailLabel.widthAnchor.constraint(equalToConstant: 50)
+            labelEmail.topAnchor.constraint(equalTo: textfieldName.bottomAnchor, constant: 20),
+            labelEmail.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 40),
+            labelEmail.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -40)
+        ]
+        
+        constraint.forEach { (item) in
+            item.isActive = true
+        }
+    }
+    
+    func constraintsEmailErrorLabel() {
+        let constraint = [
+            emailErrorLabel.centerYAnchor.constraint(equalTo: labelEmail.centerYAnchor),
+            emailErrorLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -40)
         ]
         
         constraint.forEach { (item) in
@@ -137,10 +214,10 @@ class CheckinViewController: UIViewController {
     
     func constraintsTextfieldEmail() {
         let constraint = [
-            textFieldEmail.topAnchor.constraint(equalTo: emailLabel.bottomAnchor, constant: 0),
-            textFieldEmail.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            textFieldEmail.heightAnchor.constraint(equalToConstant: 40),
-            textFieldEmail.widthAnchor.constraint(equalToConstant: 350)
+            textfieldEmail.topAnchor.constraint(equalTo: labelEmail.bottomAnchor, constant: 5),
+            textfieldEmail.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            textfieldEmail.heightAnchor.constraint(equalToConstant: 40),
+            textfieldEmail.widthAnchor.constraint(equalToConstant: 350)
         ]
         
         constraint.forEach { (item) in
@@ -148,12 +225,12 @@ class CheckinViewController: UIViewController {
         }
     }
     
-    func constraintsButton() {
+    func constraintsBotao() {
         let constraint = [
-            checkinButton.heightAnchor.constraint(equalToConstant: 50),
-            checkinButton.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 30),
-            checkinButton.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -30),
-            checkinButton.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            botaoCheckin.heightAnchor.constraint(equalToConstant: 50),
+            botaoCheckin.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 30),
+            botaoCheckin.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -30),
+            botaoCheckin.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
         ]
         
         constraint.forEach { (item) in
@@ -161,42 +238,33 @@ class CheckinViewController: UIViewController {
         }
     }
     
-    func  returnToBeginning() {
+    // MARK: - Acoes do botao
+    func  retornarAoComeco() {
         let controller = ViewController()
         self.show(controller, sender: self)
     }
     
     @objc func buttonAction() {
-        let parameters: [String: Any] = [
-            "eventId" : eventID ?? "0",
-            "name" : textFieldName.text ?? "",
-            "email" : textFieldEmail.text ?? "",
-        ]
+        guard let id = idEvento else {return}
+        guard let nome = labelNome.text else {return}
+        guard let email = labelEmail.text else {return}
+        
+        if(Connectivity.isConnectedToInternet){
+            networkService.post(idEvento: id, nome: nome, email: email, vc: self)
+        } else {
+            
+            print("Sem net")
+            let alert = UIAlertController(title: "Celular sem internet", message: "O celular não está conectado à internet!", preferredStyle: UIAlertController.Style.alert)
 
-        AF.request("http://5f5a8f24d44d640016169133.mockapi.io/api/checkin", method: .post, parameters: parameters, encoding: JSONEncoding.default)
-            .responseJSON { response in
-                switch response.result {
-                case .success( _):
-                    let alert = UIAlertController(title: "O check-in foi feito com sucesso!", message: "Seu check-in no evento foi realizado com sucesso!", preferredStyle: UIAlertController.Style.alert)
-
-                    alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: { (action) in
-                        self.returnToBeginning()
-                    }))
-
-                    self.present(alert, animated: true, completion: nil)
-                    break
-                case .failure( _):
-                   
-                            let alert = UIAlertController(title: "O check-in falhou", message: "Infelizmente houve uma falha no seu check-in pois o servidor está desabilitado", preferredStyle: UIAlertController.Style.alert)
-
-                            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler: nil))
-
-                            self.present(alert, animated: true, completion: nil)
-                }
-            }
+            alert.addAction(UIAlertAction(title: "Ok", style: UIAlertAction.Style.default, handler:nil))
+            
+            self.present(alert, animated: true, completion: nil)
+        }
+         
     }
 }
 
+// MARK: - Delegate
 extension CheckinViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
             textField.endEditing(true)

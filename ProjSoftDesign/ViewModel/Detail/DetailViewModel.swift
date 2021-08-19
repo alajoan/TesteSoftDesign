@@ -12,6 +12,7 @@ class DetailViewModel {
     
     var detalhesEvento: EventsRoot?
     
+    // MARK: - Formatar data e titulo
     var titulo: String {
         get {
             guard let title = detalhesEvento?.title else {return String()}
@@ -20,32 +21,36 @@ class DetailViewModel {
     }
     
     func formatarData() -> String {
-        guard let eventDate = detalhesEvento?.date else {return String()}
-        let dataConvertida = Date.init(milliseconds: Int64(eventDate))
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "hh:mm a 'em' dd MMM, yyyy"
-        let todaysDate = dateFormatter.string(from: dataConvertida)
-        return todaysDate
+        guard let diaEvento = detalhesEvento?.date else {return String()}
+        let dataConvertida = Date.init(milissegundos: Int64(diaEvento))
+        let formatadorData = DateFormatter()
+        formatadorData.locale = Locale(identifier: "pt-BR")
+        formatadorData.timeZone = .current
+        formatadorData.dateFormat = "hh:mm a 'em' dd 'de' MMMM 'de' yyyy"
+        let dataAtual = formatadorData.string(from: dataConvertida)
+        return dataAtual
     }
     
+    // MARK: - Métodos de anotacao no mapa
     func coordenadasDoMapa() -> MKPointAnnotation {
         
-        let annotation = MKPointAnnotation()
+        let anotacao = MKPointAnnotation()
         
-        guard let eventLatitude: Float = detalhesEvento?.latitude else {return MKPointAnnotation()}
-        guard let eventLongitude: Float = detalhesEvento?.longitude else {return MKPointAnnotation()}
+        guard let latitudeEvento: Float = detalhesEvento?.latitude else {return MKPointAnnotation()}
+        guard let longitudeEvento: Float = detalhesEvento?.longitude else {return MKPointAnnotation()}
         
-        var location = CLLocationCoordinate2D()
-        location.latitude = CLLocationDegrees(eventLatitude)
-        location.longitude = CLLocationDegrees(eventLongitude)
+        var local = CLLocationCoordinate2D()
+        local.latitude = CLLocationDegrees(latitudeEvento)
+        local.longitude = CLLocationDegrees(longitudeEvento)
         
-        annotation.coordinate = CLLocationCoordinate2D(latitude: location.latitude, longitude: location.longitude)
+        anotacao.coordinate = CLLocationCoordinate2D(latitude: local.latitude, longitude: local.longitude)
         
-        return annotation
+        return anotacao
     }
     
+    
     func regiaoDoMapa() -> MKCoordinateRegion {
-        let region = MKCoordinateRegion(center: coordenadasDoMapa().coordinate, latitudinalMeters: 600, longitudinalMeters: 500)
-        return region
+        let regiao = MKCoordinateRegion(center: coordenadasDoMapa().coordinate, latitudinalMeters: 600, longitudinalMeters: 500)
+        return regiao
     }
 }

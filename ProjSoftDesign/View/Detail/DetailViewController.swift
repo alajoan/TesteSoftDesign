@@ -11,9 +11,9 @@ import MapKit
 
 class DetailViewController: UIViewController {
     
-    //var detalhesEvento: EventsRoot?
     var detalheViewModel: DetailViewModel?
     
+    // MARK: - Criacao de ui
     private lazy var descricaoEvento: UITextView = {
         let evento = UITextView()
         guard let descricaoEventos = detalheViewModel?.detalhesEvento else {return UITextView()}
@@ -39,9 +39,21 @@ class DetailViewController: UIViewController {
         return mapa
     }()
     
+    private lazy var valorEvento: UILabel = {
+        let evento = UILabel()
+        guard let valor = detalheViewModel?.detalhesEvento?.price else {return UILabel()}
+        evento.text = "Preço da entrada:  R$\(valor)"
+        evento.adjustsFontSizeToFitWidth = true
+        evento.translatesAutoresizingMaskIntoConstraints = false
+        evento.textColor = .lightGray
+        evento.textAlignment = .center
+        return evento
+    }()
+    
     private lazy var dataEvento: UILabel = {
         let evento = UILabel()
-        evento.text = "Data do evento: \(detalheViewModel?.formatarData())"
+        guard let dataEvento = detalheViewModel?.formatarData() else {return UILabel()}
+        evento.text = "Data do evento: \(dataEvento)"
         evento.adjustsFontSizeToFitWidth = true
         evento.translatesAutoresizingMaskIntoConstraints = false
         evento.textColor = .lightGray
@@ -50,52 +62,57 @@ class DetailViewController: UIViewController {
     }()
     
     private lazy var botaoCheckin: UIButton = {
-        let button = UIButton()
-        button.setTitle("Check-in", for: .normal)
-        button.backgroundColor = .systemTeal
-        button.translatesAutoresizingMaskIntoConstraints = false
-        button.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
-        return button
+        let botao = UIButton()
+        botao.setTitle("Check-in", for: .normal)
+        botao.backgroundColor = .systemTeal
+        botao.translatesAutoresizingMaskIntoConstraints = false
+        botao.addTarget(self, action: #selector(buttonAction), for: .touchUpInside)
+        return botao
     }()
     
-    
+    // MARK: - viewDidLoad
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.title = "\(detalheViewModel?.titulo)"
+        guard let coordenadas = detalheViewModel?.coordenadasDoMapa() else {return}
+        guard let regiao = detalheViewModel?.regiaoDoMapa() else {return}
+        guard let titulo = detalheViewModel?.titulo else {return}
+        
+        self.title = "\(titulo)"
         
         view.backgroundColor = .white
         
-        addViews()
-        addConstraints()
+        adicionarViews()
+        adicionarConstraints()
         
         setImage()
         
-        mapaEvento.addAnnotation(detalheViewModel?.coordenadasDoMapa() as! MKAnnotation)
-        mapaEvento.setRegion(detalheViewModel?.regiaoDoMapa() ?? MKCoordinateRegion(), animated: true)
-        
-        let range = NSMakeRange(descricaoEvento.text?.count ?? 0 - 1, 0)
-        descricaoEvento.scrollRangeToVisible(range)
+        mapaEvento.addAnnotation(coordenadas)
+        mapaEvento.setRegion(regiao, animated: true)
+       
+        descricaoEvento.contentOffset = .zero
         
     }
-    
-    func addViews(){
+    // MARK: - Adicionar views e constraints
+    func adicionarViews(){
         view.addSubview(descricaoEvento)
         view.addSubview(imagemEvento)
         view.addSubview(mapaEvento)
         view.addSubview(dataEvento)
+        view.addSubview(valorEvento)
         view.addSubview(botaoCheckin)
     }
     
-    func addConstraints(){
-        constraintsEventImage()
-        constraintsDescription()
-        constraintsMap()
-        constraintsDate()
-        constraintsButton()
+    func adicionarConstraints(){
+        constraintsImagemEvento()
+        constraintsDescricaoEvento()
+        constraintsMapa()
+        constraintsDataEvento()
+        constraintsValorEvento()
+        constraintsBotao()
     }
-    
-    func constraintsEventImage(){
+    // MARK: - Constraints
+    func constraintsImagemEvento(){
         let constraint = [
             imagemEvento.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             imagemEvento.centerXAnchor.constraint(equalTo: view.centerXAnchor),
@@ -108,13 +125,13 @@ class DetailViewController: UIViewController {
         }
     }
     
-    func constraintsDescription() {
+    func constraintsDescricaoEvento() {
         let constraint = [
-            descricaoEvento.topAnchor.constraint(equalTo: imagemEvento.bottomAnchor, constant: 10),
-            descricaoEvento.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 10),
-            descricaoEvento.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
+            descricaoEvento.topAnchor.constraint(equalTo: imagemEvento.bottomAnchor, constant: 20),
+            descricaoEvento.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
             descricaoEvento.bottomAnchor.constraint(equalTo: mapaEvento.topAnchor, constant: -10),
-            descricaoEvento.heightAnchor.constraint(equalToConstant: 150)
+            descricaoEvento.heightAnchor.constraint(equalToConstant: 150),
+            descricaoEvento.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, constant: -20 )
         ]
         
         constraint.forEach { (item) in
@@ -122,12 +139,12 @@ class DetailViewController: UIViewController {
         }
     }
     
-    func constraintsMap() {
+    func constraintsMapa() {
         let constraint = [
-            mapaEvento.topAnchor.constraint(equalTo: descricaoEvento.bottomAnchor),
+            mapaEvento.topAnchor.constraint(equalTo: descricaoEvento.bottomAnchor, constant: 10),
             mapaEvento.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0),
             mapaEvento.heightAnchor.constraint(equalToConstant: 150),
-            mapaEvento.widthAnchor.constraint(equalToConstant: 400),
+            mapaEvento.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, constant:  -20),
             mapaEvento.bottomAnchor.constraint(equalTo: dataEvento.topAnchor, constant: -20)
         ]
         
@@ -136,10 +153,11 @@ class DetailViewController: UIViewController {
         }
     }
     
-    func constraintsDate() {
+    func constraintsDataEvento() {
         let constraint = [
             dataEvento.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 10),
             dataEvento.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
+            dataEvento.bottomAnchor.constraint(equalTo: valorEvento.topAnchor, constant: -10)
         ]
         
         constraint.forEach { (item) in
@@ -147,7 +165,18 @@ class DetailViewController: UIViewController {
         }
     }
     
-    func constraintsButton() {
+    func constraintsValorEvento() {
+        let constraint = [
+            valorEvento.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 10),
+            valorEvento.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
+        ]
+        
+        constraint.forEach { (item) in
+            item.isActive = true
+        }
+    }
+    
+    func constraintsBotao() {
         let constraint = [
             botaoCheckin.heightAnchor.constraint(equalToConstant: 50),
             botaoCheckin.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 30),
@@ -160,9 +189,14 @@ class DetailViewController: UIViewController {
         }
     }
     
+    // MARK: - Metodos botao e imagem
     @objc func buttonAction() {
         let controller = CheckinViewController()
-        controller.eventID = detalheViewModel?.detalhesEvento?.people[0].eventId
+        let viewModel = CheckinViewModel()
+        
+        guard let idEvento = detalheViewModel?.detalhesEvento?.people[0].eventId else {return}
+        controller.idEvento = idEvento
+        controller.checkinViewModel = viewModel
         self.show(controller, sender: self)
     }
     

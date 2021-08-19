@@ -11,7 +11,7 @@ class EventTableViewCell: UITableViewCell {
     
     static let identifier = "EventTableViewCell"
     
-    
+    // MARK: - Parte visual
     private let title: UILabel = {
        let title = UILabel()
         title.textColor = .white
@@ -19,6 +19,7 @@ class EventTableViewCell: UITableViewCell {
         return title
     }()
     
+    // MARK: - Init
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         contentView.backgroundColor = .systemTeal
@@ -30,6 +31,7 @@ class EventTableViewCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    // MARK: - Reuso
     override func layoutSubviews() {
         super.layoutSubviews()
         title.frame = CGRect(x: 20, y: 0, width: contentView.frame.size.width - 10, height: contentView.frame.size.height)

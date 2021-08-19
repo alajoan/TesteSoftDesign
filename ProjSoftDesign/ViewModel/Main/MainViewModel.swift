@@ -9,7 +9,7 @@ import Foundation
 import RxSwift
 class MainViewModel {
     
-     var titulo: String {get { return "Eventos" }}
+    var titulo: String {get { return "Eventos" }}
     
     private let chamada = NetworkServices()
     
