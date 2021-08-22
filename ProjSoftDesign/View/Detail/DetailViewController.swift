@@ -12,6 +12,22 @@ import MapKit
 class DetailViewController: UIViewController {
     
     var detalheViewModel: DetailViewModel?
+    lazy var contentSize = CGSize(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height + 200)
+    
+    lazy var scrollView: UIScrollView = {
+        let scroll = UIScrollView(frame: .zero)
+        scroll.translatesAutoresizingMaskIntoConstraints = false
+        scroll.contentSize = contentSize
+        scroll.frame = view.safeAreaLayoutGuide.layoutFrame
+        return scroll
+    } ()
+    
+    lazy var contentView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        view.frame.size = contentSize
+        return view
+    } ()
     
     // MARK: - Criacao de ui
     private lazy var descricaoEvento: UITextView = {
@@ -80,6 +96,7 @@ class DetailViewController: UIViewController {
         
         self.title = "\(titulo)"
         
+        
         view.backgroundColor = .white
         
         adicionarViews()
@@ -95,15 +112,20 @@ class DetailViewController: UIViewController {
     }
     // MARK: - Adicionar views e constraints
     func adicionarViews(){
-        view.addSubview(descricaoEvento)
-        view.addSubview(imagemEvento)
-        view.addSubview(mapaEvento)
-        view.addSubview(dataEvento)
-        view.addSubview(valorEvento)
-        view.addSubview(botaoCheckin)
+        view.addSubview(scrollView)
+        scrollView.addSubview(contentView)
+        
+        contentView.addSubview(descricaoEvento)
+        contentView.addSubview(imagemEvento)
+        contentView.addSubview(mapaEvento)
+        contentView.addSubview(dataEvento)
+        contentView.addSubview(valorEvento)
+        contentView.addSubview(botaoCheckin)
     }
     
     func adicionarConstraints(){
+        constraintsScrollView()
+        constraintsContentView()
         constraintsImagemEvento()
         constraintsDescricaoEvento()
         constraintsMapa()
@@ -112,12 +134,43 @@ class DetailViewController: UIViewController {
         constraintsBotao()
     }
     // MARK: - Constraints
+    
+    func constraintsScrollView(){
+        let constraint = [
+            scrollView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
+            scrollView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
+            scrollView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            scrollView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
+            scrollView.heightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.heightAnchor),
+            scrollView.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor)
+        ]
+        
+        constraint.forEach { (item) in
+            item.isActive = true
+        }
+    }
+    
+    func constraintsContentView(){
+        let constraint = [
+            contentView.topAnchor.constraint(equalTo: scrollView.topAnchor, constant: 0),
+            contentView.leftAnchor.constraint(equalTo: scrollView.leftAnchor, constant: 0),
+            contentView.rightAnchor.constraint(equalTo: scrollView.rightAnchor, constant: 0),
+            contentView.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor, constant: 0),
+            contentView.heightAnchor.constraint(equalTo: scrollView.heightAnchor,constant: 200),
+            contentView.widthAnchor.constraint(equalTo: scrollView.widthAnchor)
+        ]
+        
+        constraint.forEach { (item) in
+            item.isActive = true
+        }
+    }
+        
     func constraintsImagemEvento(){
         let constraint = [
-            imagemEvento.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            imagemEvento.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            imagemEvento.heightAnchor.constraint(equalToConstant: 150),
-            imagemEvento.widthAnchor.constraint(equalToConstant: 150)
+            imagemEvento.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 5),
+            imagemEvento.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            imagemEvento.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height * 1/4),
+            imagemEvento.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.width - 10)
         ]
         
         constraint.forEach { (item) in
@@ -127,11 +180,11 @@ class DetailViewController: UIViewController {
     
     func constraintsDescricaoEvento() {
         let constraint = [
-            descricaoEvento.topAnchor.constraint(equalTo: imagemEvento.bottomAnchor, constant: 20),
-            descricaoEvento.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor),
+            descricaoEvento.topAnchor.constraint(equalTo: imagemEvento.bottomAnchor, constant: 5),
+            descricaoEvento.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             descricaoEvento.bottomAnchor.constraint(equalTo: mapaEvento.topAnchor, constant: -10),
-            descricaoEvento.heightAnchor.constraint(equalToConstant: 150),
-            descricaoEvento.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, constant: -20 )
+            descricaoEvento.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height * 1/3),
+            descricaoEvento.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -10 )
         ]
         
         constraint.forEach { (item) in
@@ -141,10 +194,10 @@ class DetailViewController: UIViewController {
     
     func constraintsMapa() {
         let constraint = [
-            mapaEvento.topAnchor.constraint(equalTo: descricaoEvento.bottomAnchor, constant: 10),
-            mapaEvento.centerXAnchor.constraint(equalTo: view.centerXAnchor, constant: 0),
-            mapaEvento.heightAnchor.constraint(equalToConstant: 150),
-            mapaEvento.widthAnchor.constraint(equalTo: view.safeAreaLayoutGuide.widthAnchor, constant:  -20),
+            mapaEvento.topAnchor.constraint(equalTo: descricaoEvento.bottomAnchor, constant: 5),
+            mapaEvento.centerXAnchor.constraint(equalTo: contentView.centerXAnchor, constant: 0),
+            mapaEvento.heightAnchor.constraint(equalToConstant: UIScreen.main.bounds.height * 1/4),
+            mapaEvento.widthAnchor.constraint(equalTo: contentView.widthAnchor, constant: -10),
             mapaEvento.bottomAnchor.constraint(equalTo: dataEvento.topAnchor, constant: -20)
         ]
         
@@ -155,8 +208,8 @@ class DetailViewController: UIViewController {
     
     func constraintsDataEvento() {
         let constraint = [
-            dataEvento.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 10),
-            dataEvento.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
+            dataEvento.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
+            dataEvento.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10),
             dataEvento.bottomAnchor.constraint(equalTo: valorEvento.topAnchor, constant: -10)
         ]
         
@@ -167,8 +220,8 @@ class DetailViewController: UIViewController {
     
     func constraintsValorEvento() {
         let constraint = [
-            valorEvento.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 10),
-            valorEvento.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -10),
+            valorEvento.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 10),
+            valorEvento.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -10),
         ]
         
         constraint.forEach { (item) in
@@ -179,9 +232,9 @@ class DetailViewController: UIViewController {
     func constraintsBotao() {
         let constraint = [
             botaoCheckin.heightAnchor.constraint(equalToConstant: 50),
-            botaoCheckin.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 30),
-            botaoCheckin.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -30),
-            botaoCheckin.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -20)
+            botaoCheckin.leftAnchor.constraint(equalTo: contentView.leftAnchor, constant: 30),
+            botaoCheckin.rightAnchor.constraint(equalTo: contentView.rightAnchor, constant: -30),
+            botaoCheckin.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -30)
         ]
         
         constraint.forEach { (item) in

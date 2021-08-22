@@ -54,7 +54,7 @@ class CheckinViewController: UIViewController {
         let nome = UILabel()
         nome.translatesAutoresizingMaskIntoConstraints = false
         nome.textColor = .systemRed
-        nome.text = "E-mail precisa seguir o padrão exemplo@servidor.com"
+        nome.text = "seguir o padrão exemplo@servidor.com"
         nome.textAlignment = .right
         nome.font = nome.font.withSize(10)
         return nome
@@ -157,7 +157,7 @@ class CheckinViewController: UIViewController {
         let constraint = [
             labelNome.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 60),
             labelNome.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 40),
-            labelNome.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -40)
+            labelNome.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -230)
         ]
         
         constraint.forEach { (item) in
@@ -168,7 +168,9 @@ class CheckinViewController: UIViewController {
     func constraintsNameErrorLabel() {
         let constraint = [
             nomeErrorLabel.centerYAnchor.constraint(equalTo: labelNome.centerYAnchor),
-            nomeErrorLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -40)
+            nomeErrorLabel.leftAnchor.constraint(equalTo: labelNome.rightAnchor, constant: 10),
+            nomeErrorLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),
+            nomeErrorLabel.bottomAnchor.constraint(equalTo: textfieldName.topAnchor, constant: 10)
         ]
         
         constraint.forEach { (item) in
@@ -179,9 +181,8 @@ class CheckinViewController: UIViewController {
     func constraintsTextfieldName() {
         let constraint = [
             textfieldName.topAnchor.constraint(equalTo: labelNome.bottomAnchor, constant: 5),
-            textfieldName.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            textfieldName.heightAnchor.constraint(equalToConstant: 40),
-            textfieldName.widthAnchor.constraint(equalToConstant: 350)
+            textfieldName.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20),
+            textfieldName.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20)
         ]
         
         constraint.forEach { (item) in
@@ -193,7 +194,7 @@ class CheckinViewController: UIViewController {
         let constraint = [
             labelEmail.topAnchor.constraint(equalTo: textfieldName.bottomAnchor, constant: 20),
             labelEmail.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 40),
-            labelEmail.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -40)
+            labelEmail.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -230)
         ]
         
         constraint.forEach { (item) in
@@ -204,7 +205,9 @@ class CheckinViewController: UIViewController {
     func constraintsEmailErrorLabel() {
         let constraint = [
             emailErrorLabel.centerYAnchor.constraint(equalTo: labelEmail.centerYAnchor),
-            emailErrorLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -40)
+            emailErrorLabel.leftAnchor.constraint(equalTo: labelEmail.rightAnchor, constant: 10),
+            emailErrorLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),
+            emailErrorLabel.bottomAnchor.constraint(equalTo: textfieldEmail.topAnchor, constant: 10)
         ]
         
         constraint.forEach { (item) in
@@ -215,9 +218,8 @@ class CheckinViewController: UIViewController {
     func constraintsTextfieldEmail() {
         let constraint = [
             textfieldEmail.topAnchor.constraint(equalTo: labelEmail.bottomAnchor, constant: 5),
-            textfieldEmail.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            textfieldEmail.heightAnchor.constraint(equalToConstant: 40),
-            textfieldEmail.widthAnchor.constraint(equalToConstant: 350)
+            textfieldEmail.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 20),
+            textfieldEmail.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -20),
         ]
         
         constraint.forEach { (item) in
